@@ -9,15 +9,11 @@ except ImportError:
     from io import BytesIO
 import struct
 
-import cmd_brush_t
-
-import cmd_wheel_mode_t
-
-import cmd_floating_mode_t
-
-import cmd_electromagnet_t
-
-import cmd_camera_t
+from .cmd_brush_t import cmd_brush_t
+from .cmd_wheel_mode_t import cmd_wheel_mode_t
+from .cmd_floating_mode_t import cmd_floating_mode_t
+from .cmd_electromagnet_t import cmd_electromagnet_t
+from .cmd_camera_t import cmd_camera_t
 
 class LowlevelCmd_t(object):
     __slots__ = ["cmd_floating_mode", "cmd_wheel_mode", "cmd_electromagnet", "cmd_brush", "cmd_camera"]

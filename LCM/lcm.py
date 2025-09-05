@@ -1,15 +1,12 @@
 import lcm
 import threading
 import sys
-from lcm_type.LowlevelState_t import LowlevelState_t
-from lcm_type.LowlevelCmd_t import LowlevelCmd_t
+from .lcm_type.LowlevelState_t import LowlevelState_t
+from .lcm_type.LowlevelCmd_t import LowlevelCmd_t
 
-class Custom:
+class LCMInterface:
     def __init__(self):
         self.lcm = lcm.LCM("udpm://239.255.76.67:7667?ttl=255")
-        if not self.lcm.good():
-            sys.stderr.write("Failed to initialize LCM\n")
-            return
         
         self.state_mutex = threading.Lock()
         self.cmd_mutex = threading.Lock()
@@ -20,36 +17,40 @@ class Custom:
         self.data_init()
         print("LCM initialized successfully")
         
-        self.receive_thread = threading.Thread(target=self.handle_receive)
-        self.receive_thread.daemon = True
-        self.receive_thread.start()
-        
-        self.lcm.subscribe("uwbot_state", self.state_callback)
+        self.lcm_stop_flag = True #开启lcm设置为False，关闭lcm设置为True
+
+        self.receiveData()
+        self.send_data_once()
+
 
     def __del__(self):
         if hasattr(self, 'receive_thread') and self.receive_thread.is_alive():
             self.receive_thread.join()
+
+    #接收：执行一次，订阅uwbot_state
+    def receiveData(self):
+        self.lcm.subscribe("uwbot_state", self.state_callback)
 
     def state_callback(self, channel, data):
         msg = LowlevelState_t.decode(data)
         with self.state_mutex:
             self.state_simple = msg
 
-    def cmd_callback(self, channel, data):
-        msg = LowlevelCmd_t.decode(data)
-        with self.cmd_mutex:
-            self.command_simple = msg
+    # def cmd_callback(self, channel, data):
+    #     msg = LowlevelCmd_t.decode(data)
+    #     with self.cmd_mutex:
+    #         self.command_simple = msg
 
+    #创建一个新线程，调用 lcm 对象的 handle_receive 方法，阻塞
     def handle_receive(self):
-        while True:
+        while not self.lcm_stop_flag:
             self.lcm.handle()
 
+    #定时发送send_data_once：100hz，放到ui主线程
     def send_data_once(self):
-        if not self.lcm.good():
-            sys.stderr.write("LCM is not ready\n")
-            return
         with self.cmd_mutex:
             self.lcm.publish("uwbot_command", self.command_simple.encode())
+
 
     def data_init(self):
         """LowlevelCmd_t数据初始化"""
@@ -82,9 +83,9 @@ class Custom:
 
         # 初始化清洗功能
         self.command_simple.cmd_brush.cmd_brush_enable = 0
-        self.command_simple.cmd_brush.cmd_brush_power = 0.0
+        self.command_simple.cmd_brush.cmd_brush_power = 0
         self.command_simple.cmd_brush.cmd_water_enable = 0
-        self.command_simple.cmd_brush.cmd_water_flow = 0.0
+        self.command_simple.cmd_brush.cmd_water_flow = 0
         
         # 初始化相机控制命令
         self.command_simple.cmd_camera.cmd_camera_enable = [ 0 for dim0 in range(2) ]
@@ -98,20 +99,20 @@ class Custom:
         
         """LowlevelState_t数据初始化"""
         #初始化机器人位姿
-        self.state_simple.state_robot.position_x = 0.0
-        self.state_simple.state_robot.position_y = 0.0
-        self.state_simple.state_robot.position_z = 0.0
-        self.state_simple.state_robot.roll = 0.0
-        self.state_simple.state_robot.pitch = 0.0
-        self.state_simple.state_robot.yaw = 0.0
+        self.state_simple.state_robot.sta_position_x = 0.0
+        self.state_simple.state_robot.sta_position_y = 0.0
+        self.state_simple.state_robot.sta_position_z = 0.0
+        self.state_simple.state_robot.sta_roll = 0.0
+        self.state_simple.state_robot.sta_pitch = 0.0
+        self.state_simple.state_robot.sta_yaw = 0.0
 
         #初始化浮游模式状态
-        self.state_simple.state_floating_mode.vel_x = 0.0
-        self.state_simple.state_floating_mode.vel_y = 0.0
-        self.state_simple.state_floating_mode.vel_z = 0.0
-        self.state_simple.state_floating_mode.angular_x = 0.0
-        self.state_simple.state_floating_mode.angular_y = 0.0
-        self.state_simple.state_floating_mode.angular_z = 0.0
+        self.state_simple.state_floating_mode.sta_floating_vel_x = 0.0
+        self.state_simple.state_floating_mode.sta_floating_vel_y = 0.0
+        self.state_simple.state_floating_mode.sta_floating_vel_z = 0.0
+        self.state_simple.state_floating_mode.sta_floating_angular_x = 0.0
+        self.state_simple.state_floating_mode.sta_floating_angular_y = 0.0
+        self.state_simple.state_floating_mode.sta_floating_angular_z = 0.0
         self.state_simple.state_floating_mode.sta_thruster_power = [ 0.0 for dim0 in range(4) ]
         self.state_simple.state_floating_mode.sta_thruster_temp = [ 0.0 for dim0 in range(4) ]
 

@@ -8,6 +8,7 @@
 import sys
 import os
 import json
+import threading 
 from PyQt5.QtWidgets import (
     QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
     QTabWidget, QLabel, QDesktopWidget
@@ -26,6 +27,7 @@ from ui_modules.control_mode.motion.motion_control import MotionControlWidget
 from ui_modules.control_mode.camera import DualCameraWidget
 from ui_modules.param_mode.parameters_view import ParametersViewWidget
 from ui_modules.log_mode.log_view import LogViewWidget
+from LCM.lcm import LCMInterface
 
 
 
@@ -35,12 +37,27 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.robot_data = get_robot_data()
+        self.lcm = LCMInterface()
         self.config = self.load_config()
         self.uptime_counter = 0.0  # 独立的运行时间计数器
+        self.init_lcm()  # 初始化LCM通信线程
         self.setup_logging()  # 初始化日志系统
         self.init_ui()
         self.setup_timer()
-        
+
+    def init_lcm(self):
+        """初始化LCM通信"""
+        self.lcm.lcm_stop_flag = False #开启lcm
+        self.lcm.receiveData()
+        # 创建新线程运行LCM接收循环
+        self.lcm_thread = threading.Thread(target=self.lcm.handle_receive, daemon=True)
+        self.lcm_thread.start()
+        self.robot_data.state = self.lcm.state_simple
+        # 添加100Hz LCM数据发送定时器
+        self.lcm_send_timer = QTimer()
+        self.lcm_send_timer.timeout.connect(self.lcm.send_data_once)
+        self.lcm_send_timer.start(10)  # 10ms = 100Hz
+
     def load_config(self):
         """加载配置文件"""
         config_file = os.path.join(os.path.dirname(__file__), 'config', 'ui_config.json')

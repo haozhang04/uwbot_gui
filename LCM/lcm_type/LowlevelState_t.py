@@ -9,17 +9,12 @@ except ImportError:
     from io import BytesIO
 import struct
 
-import state_robot_t
-
-import state_electromagnet_t
-
-import state_wheel_mode_t
-
-import state_brush_t
-
-import state_system_t
-
-import state_floating_mode_t
+from .state_robot_t import state_robot_t
+from .state_electromagnet_t import state_electromagnet_t
+from .state_wheel_mode_t import state_wheel_mode_t
+from .state_brush_t import state_brush_t
+from .state_system_t import state_system_t
+from .state_floating_mode_t import state_floating_mode_t
 
 class LowlevelState_t(object):
     __slots__ = ["state_robot", "state_floating_mode", "state_wheel_mode", "state_electromagnet", "state_brush", "state_system"]
