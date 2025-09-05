@@ -316,7 +316,7 @@ def main():
     app.setApplicationVersion("1.0.0")
     
     # 设置字体
-    font = QFont("Microsoft YaHei", 9)
+    font = QFont("SimHei", 9)
     
     app.setFont(font)
     

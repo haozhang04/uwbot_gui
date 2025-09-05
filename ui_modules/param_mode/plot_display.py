@@ -15,7 +15,7 @@ from collections import defaultdict, deque
 import numpy as np
 
 # 设置matplotlib中文字体
-plt.rcParams['font.sans-serif'] = ['SimHei', 'Microsoft YaHei', 'DejaVu Sans']
+plt.rcParams['font.sans-serif'] = ['SimHei']
 plt.rcParams['axes.unicode_minus'] = False
 # sudo apt-get install fonts-wqy-microhei fonts-noto-cjk
 
