@@ -1,0 +1,56 @@
+# 水下机器人GUI控制系统依赖包
+# Underwater Robot GUI Control System Dependencies
+
+# PyQt5 - GUI框架
+PyQt5==5.15.9
+
+# 数据处理和科学计算
+numpy==1.24.3
+matplotlib==3.7.1
+scipy==1.10.1
+
+# 图像处理
+opencv-python==4.7.1.72
+Pillow==9.5.0
+
+# 绘图和可视化
+pyqtgraph==0.13.3
+seaborn==0.12.2
+
+# 数据结构和序列化
+dataclasses-json==0.5.9
+
+# 视频编解码
+imageio==2.31.1
+imageio-ffmpeg==0.4.8
+
+# 系统和文件操作
+psutil==5.9.5
+watchdog==3.0.0
+
+# 日志和配置
+coloredlogs==15.0.1
+pyyaml==6.0
+
+# 网络通信（如果需要）
+requests==2.31.0
+
+# 开发和调试工具（可选）
+# pytest==7.4.0
+# black==23.3.0
+# flake8==6.0.0
+
+# 注意事项：
+# 1. 安装前请确保Python版本 >= 3.7
+# 2. 建议使用虚拟环境安装依赖
+# 3. Windows用户可能需要安装Visual C++ Build Tools
+# 4. 如果opencv-python安装失败，可尝试opencv-python-headless
+
+# 安装命令：
+# pip install -r requirements.txt
+
+# 创建虚拟环境（推荐）：
+# python -m venv uwbot_env
+# uwbot_env\Scripts\activate  # Windows
+# source uwbot_env/bin/activate  # Linux/Mac
+# pip install -r requirements.txt
