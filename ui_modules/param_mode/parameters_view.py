@@ -18,7 +18,6 @@ import logging
 from .plot_display import PlotDisplayWidget
 from .data_display import CmdDataDisplayWidget, StateDataDisplayWidget
 
-
 class ParametersViewWidget(QWidget):
     """参数界面主组件 - 3模块横向布局"""
     

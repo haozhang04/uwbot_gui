@@ -317,6 +317,7 @@ def main():
     
     # 设置字体
     font = QFont("Microsoft YaHei", 9)
+    
     app.setFont(font)
     
     # 创建主窗口
