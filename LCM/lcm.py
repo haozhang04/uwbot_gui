@@ -142,3 +142,103 @@ class LCMInterface:
         self.state_simple.state_system.sta_packet_loss = 0
         self.state_simple.state_system.sta_leak_detected = 0
         self.state_simple.state_system.sta_uptime = 0
+
+    def _convert_cmd_to_lcm_format(self, ui_cmd):
+        """将UI的LowlevelCmd数据类转换为LCM的LowlevelCmd_t格式"""
+        lcm_cmd = LowlevelCmd_t()
+        
+        # 转换浮游模式命令
+        lcm_cmd.cmd_floating_mode.cmd_floating_vel_x = ui_cmd.cmd_floating_mode.cmd_floating_vel_x
+        lcm_cmd.cmd_floating_mode.cmd_floating_vel_y = ui_cmd.cmd_floating_mode.cmd_floating_vel_y
+        lcm_cmd.cmd_floating_mode.cmd_floating_vel_z = ui_cmd.cmd_floating_mode.cmd_floating_vel_z
+        lcm_cmd.cmd_floating_mode.cmd_floating_angular_roll = ui_cmd.cmd_floating_mode.cmd_floating_angular_roll
+        lcm_cmd.cmd_floating_mode.cmd_floating_angular_yaw = ui_cmd.cmd_floating_mode.cmd_floating_angular_yaw
+        lcm_cmd.cmd_floating_mode.cmd_floating_angular_pitch = ui_cmd.cmd_floating_mode.cmd_floating_angular_pitch
+        lcm_cmd.cmd_floating_mode.cmd_depth_hold = ui_cmd.cmd_floating_mode.cmd_depth_hold
+        lcm_cmd.cmd_floating_mode.cmd_target_depth = ui_cmd.cmd_floating_mode.cmd_target_depth
+        lcm_cmd.cmd_floating_mode.cmd_floating_heading_hold = ui_cmd.cmd_floating_mode.cmd_floating_heading_hold
+        lcm_cmd.cmd_floating_mode.cmd_target_roll = ui_cmd.cmd_floating_mode.cmd_target_roll
+        lcm_cmd.cmd_floating_mode.cmd_target_yaw = ui_cmd.cmd_floating_mode.cmd_target_yaw
+        lcm_cmd.cmd_floating_mode.cmd_target_pitch = ui_cmd.cmd_floating_mode.cmd_target_pitch
+        
+        # 转换轮式模式命令
+        lcm_cmd.cmd_wheel_mode.cmd_wheel_linear_vel = ui_cmd.cmd_wheel_mode.cmd_wheel_linear_vel
+        lcm_cmd.cmd_wheel_mode.cmd_wheel_angular_vel = ui_cmd.cmd_wheel_mode.cmd_wheel_angular_vel
+        lcm_cmd.cmd_wheel_mode.cmd_wheel_heading_hold = ui_cmd.cmd_wheel_mode.cmd_wheel_heading_hold
+        lcm_cmd.cmd_wheel_mode.cmd_target_heading = ui_cmd.cmd_wheel_mode.cmd_target_heading
+        
+        # 转换电磁铁命令
+        lcm_cmd.cmd_electromagnet.cmd_electromagnet_enable = ui_cmd.cmd_electromagnet.cmd_electromagnet_enable
+        lcm_cmd.cmd_electromagnet.cmd_electromagnet_voltage = ui_cmd.cmd_electromagnet.cmd_electromagnet_voltage
+        
+        # 转换清洗命令
+        lcm_cmd.cmd_brush.cmd_brush_enable = ui_cmd.cmd_brush.cmd_brush_enable
+        lcm_cmd.cmd_brush.cmd_brush_power = ui_cmd.cmd_brush.cmd_brush_power
+        lcm_cmd.cmd_brush.cmd_water_enable = ui_cmd.cmd_brush.cmd_water_enable
+        lcm_cmd.cmd_brush.cmd_water_flow = ui_cmd.cmd_brush.cmd_water_flow
+        
+        # 转换相机命令
+        lcm_cmd.cmd_camera.cmd_camera_enable = ui_cmd.cmd_camera.cmd_camera_enable
+        lcm_cmd.cmd_camera.cmd_camera_zoom = ui_cmd.cmd_camera.cmd_camera_zoom
+        lcm_cmd.cmd_camera.cmd_camera_record = ui_cmd.cmd_camera.cmd_camera_record
+        lcm_cmd.cmd_camera.cmd_camera_record_time = ui_cmd.cmd_camera.cmd_camera_record_time
+        lcm_cmd.cmd_camera.cmd_camera_snapshot = ui_cmd.cmd_camera.cmd_camera_snapshot
+        lcm_cmd.cmd_camera.cmd_storage_path = ui_cmd.cmd_camera.cmd_storage_path
+        lcm_cmd.cmd_camera.cmd_camera_path = ui_cmd.cmd_camera.cmd_camera_path
+        
+        return lcm_cmd
+
+    def _convert_state_to_ui_format(self, lcm_state):
+        """将LCM的LowlevelState_t格式转换为UI的LowlevelState dataclass格式"""
+        from messages.LowlevelState import LowlevelState, state_robot, state_floating_mode, state_wheel_mode, state_electromagnet, state_brush, state_system
+        
+        ui_state = LowlevelState()
+        
+        # 转换机器人位姿状态
+        ui_state.state_robot.sta_position_x = lcm_state.state_robot.sta_position_x
+        ui_state.state_robot.sta_position_y = lcm_state.state_robot.sta_position_y
+        ui_state.state_robot.sta_position_z = lcm_state.state_robot.sta_position_z
+        ui_state.state_robot.sta_roll = lcm_state.state_robot.sta_roll
+        ui_state.state_robot.sta_pitch = lcm_state.state_robot.sta_pitch
+        ui_state.state_robot.sta_yaw = lcm_state.state_robot.sta_yaw
+        
+        # 转换浮游模式状态
+        ui_state.state_floating_mode.sta_floating_vel_x = lcm_state.state_floating_mode.sta_floating_vel_x
+        ui_state.state_floating_mode.sta_floating_vel_y = lcm_state.state_floating_mode.sta_floating_vel_y
+        ui_state.state_floating_mode.sta_floating_vel_z = lcm_state.state_floating_mode.sta_floating_vel_z
+        ui_state.state_floating_mode.sta_floating_angular_x = lcm_state.state_floating_mode.sta_floating_angular_x
+        ui_state.state_floating_mode.sta_floating_angular_y = lcm_state.state_floating_mode.sta_floating_angular_y
+        ui_state.state_floating_mode.sta_floating_angular_z = lcm_state.state_floating_mode.sta_floating_angular_z
+        # 确保推进器数据是列表而不是元组
+        ui_state.state_floating_mode.sta_thruster_power = list(lcm_state.state_floating_mode.sta_thruster_power)
+        ui_state.state_floating_mode.sta_thruster_temp = list(lcm_state.state_floating_mode.sta_thruster_temp)
+        
+        # 转换轮式模式状态
+        ui_state.state_wheel_mode.sta_wheel_linear_vel = lcm_state.state_wheel_mode.sta_wheel_linear_vel
+        ui_state.state_wheel_mode.sta_wheel_angular_vel = lcm_state.state_wheel_mode.sta_wheel_angular_vel
+        # 确保电机数据是列表而不是元组
+        ui_state.state_wheel_mode.sta_motor_data = list(lcm_state.state_wheel_mode.sta_motor_data)
+        ui_state.state_wheel_mode.sta_motor_temp = list(lcm_state.state_wheel_mode.sta_motor_temp)
+        
+        # 转换电磁铁状态
+        ui_state.state_electromagnet.sta_electromagnet_enable = int(lcm_state.state_electromagnet.sta_electromagnet_enable)
+        ui_state.state_electromagnet.sta_electromagnet_voltage = int(lcm_state.state_electromagnet.sta_electromagnet_voltage)
+        
+        # 转换清洗状态
+        ui_state.state_brush.sta_brush_enable = int(lcm_state.state_brush.sta_brush_enable)
+        ui_state.state_brush.sta_brush_power = int(lcm_state.state_brush.sta_brush_power)
+        ui_state.state_brush.sta_water_enable = int(lcm_state.state_brush.sta_water_enable)
+        ui_state.state_brush.sta_water_flow = int(lcm_state.state_brush.sta_water_flow)
+        
+        # 转换系统状态
+        ui_state.state_system.sta_system_voltage = lcm_state.state_system.sta_system_voltage
+        ui_state.state_system.sta_system_current = lcm_state.state_system.sta_system_current
+        ui_state.state_system.sta_system_power = lcm_state.state_system.sta_system_power
+        ui_state.state_system.sta_comm_status = lcm_state.state_system.sta_comm_status
+        ui_state.state_system.sta_communication_status = lcm_state.state_system.sta_communication_status
+        ui_state.state_system.sta_comm_latency = lcm_state.state_system.sta_comm_latency
+        ui_state.state_system.sta_packet_loss = lcm_state.state_system.sta_packet_loss
+        ui_state.state_system.sta_leak_detected = lcm_state.state_system.sta_leak_detected
+        ui_state.state_system.sta_uptime = lcm_state.state_system.sta_uptime
+        
+        return ui_state

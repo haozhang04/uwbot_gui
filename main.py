@@ -52,11 +52,6 @@ class MainWindow(QMainWindow):
         # 创建新线程运行LCM接收循环
         self.lcm_thread = threading.Thread(target=self.lcm.handle_receive, daemon=True)
         self.lcm_thread.start()
-        self.robot_data.state = self.lcm.state_simple
-        # 添加100Hz LCM数据发送定时器
-        self.lcm_send_timer = QTimer()
-        self.lcm_send_timer.timeout.connect(self.lcm.send_data_once)
-        self.lcm_send_timer.start(10)  # 10ms = 100Hz
 
     def load_config(self):
         """加载配置文件"""
@@ -244,8 +239,6 @@ class MainWindow(QMainWindow):
         self.parameters_widget = ParametersViewWidget(self.robot_data)
         self.tab_widget.addTab(self.parameters_widget, "⚙️ 参数")
         
-
-        
     def create_log_interface(self):
         """创建日志界面"""
         # 导入日志模块
@@ -257,7 +250,7 @@ class MainWindow(QMainWindow):
         """设置定时器用于数据更新"""
         self.update_timer = QTimer()
         self.update_timer.timeout.connect(self.update_data)
-        self.update_timer.start(200)  # 200ms更新一次，减少CPU占用
+        self.update_timer.start(10)  # 10ms更新一次，减少CPU占用
         
     def on_tab_changed(self, index):
         """标签页切换时的处理"""
@@ -270,10 +263,16 @@ class MainWindow(QMainWindow):
     
     def update_data(self):
         """更新数据显示"""
+
+        # 发送LCM数据
+        self.robot_data.state = self.lcm._convert_state_to_ui_format(self.lcm.state_simple)
+        self.lcm.command_simple = self.lcm._convert_cmd_to_lcm_format(self.robot_data.cmd)
+        self.lcm.send_data_once()
+
         # 更新系统运行时间
         self.uptime_counter += 0.2  # 每200ms增加0.2秒
         self.robot_data.update_uptime(self.uptime_counter)
-        
+
         # 始终更新主状态栏
         if hasattr(self, 'main_status_bar'):
             self.main_status_bar.update_display()

@@ -297,7 +297,7 @@ class ParametersViewWidget(QWidget):
                     print(f"警告: sta_uptime是只读参数，忽略手动修改请求: {value}")
                     return
             
-            print(f"状态参数已更新: {group_name}.{param_name} = {value}")
+            # print(f"状态参数已更新: {group_name}.{param_name} = {value}")
             
         except Exception as e:
             print(f"更新状态参数失败: {group_name}.{param_name} = {value}, 错误: {e}")
