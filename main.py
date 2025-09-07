@@ -251,14 +251,14 @@ class MainWindow(QMainWindow):
         """设置定时器用于数据更新"""
         self.update_timer = QTimer()
         self.update_timer.timeout.connect(self.update_data)
-        self.update_timer.start(self.robot_data.uptime)  # 使用统一的uptime参数，20ms更新一次
+        self.update_timer.start(self.robot_data.app_dt)  # 使用统一的app_dt参数，50Hz更新一次
         
     def on_tab_changed(self, index):
         """标签页切换时的处理"""
         # 暂停非活动标签页的定时器以提升性能
         if hasattr(self, 'parameters_widget'):
             if index == 1:  # 参数界面
-                self.parameters_widget.update_timer.start(self.robot_data.uptime)  # 使用统一的uptime参数
+                self.parameters_widget.update_timer.start(self.robot_data.app_dt)  # 使用统一的app_dt参数
             else:
                 self.parameters_widget.update_timer.stop()
     
@@ -271,7 +271,7 @@ class MainWindow(QMainWindow):
         self.lcm.send_data_once()
 
         # 更新系统运行时间
-        self.uptime_counter += self.robot_data.uptime / 1000.0  # 根据uptime参数增加时间
+        self.uptime_counter += self.robot_data.app_dt / 1000.0  # 根据app_dt参数增加时间
         self.robot_data.update_uptime(self.uptime_counter)
 
         # 始终更新主状态栏

@@ -188,13 +188,14 @@ class MainStatusBar(QWidget):
             current = float(getattr(system_state, 'sta_system_current', 0.0))
             power = float(getattr(system_state, 'sta_system_power', 0.0))
             comm_status_code = int(getattr(system_state, 'sta_comm_status', 0))
-            # sta_comm_latency是发送时间戳，需要计算实际延迟
-            send_time = int(getattr(system_state, 'sta_comm_latency', 0))
+            # sta_send_time是发送时间戳(Unix纪元毫秒数)，需要计算实际延迟
+            send_time = int(getattr(system_state, 'sta_send_time', 0))
             if send_time > 0:
                 current_time = int(time.time() * 1000)  # 当前时间戳(ms)
                 latency = current_time - send_time  # 计算延迟
+                # print(f"send_time: {send_time}, current_time: {current_time}, latency: {latency}")
                 # 防止负值或异常大值
-                if latency < 0 or latency > 10000:  # 超过10秒认为异常
+                if latency < 0 or latency > 500:  # 超过0.5秒认为异常
                     latency = -1
             else:
                 latency = -1  # 无效数据

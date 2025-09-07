@@ -769,7 +769,7 @@ class MotionControlWidget(QWidget):
         from PyQt5.QtCore import QTimer
         self.status_timer = QTimer()
         self.status_timer.timeout.connect(self.update_status_indicators)
-        self.status_timer.start(self.robot_data.uptime)  # 使用统一的uptime参数，20ms更新一次
+        self.status_timer.start(self.robot_data.app_dt)  # 使用统一的app_dt参数，50Hz更新一次
         
         logging.info("实时状态反馈系统已启动")
     

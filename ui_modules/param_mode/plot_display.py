@@ -172,7 +172,7 @@ class PlotWidget(QWidget):
         self.update_timer = QTimer()
         self.update_timer.timeout.connect(self.update_plot)
         # 使用统一的uptime参数，如果没有robot_data则使用默认值20ms
-        uptime = self.robot_data.uptime if self.robot_data else 20
+        uptime = self.robot_data.app_dt if self.robot_data else 50
         self.update_timer.start(uptime)  # 使用统一的uptime参数，20ms更新一次
         
 

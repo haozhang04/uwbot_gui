@@ -138,7 +138,7 @@ class LCMInterface:
         self.state_simple.state_system.sta_system_power = 0.0
         self.state_simple.state_system.sta_comm_status = 0
         self.state_simple.state_system.sta_communication_status = 0
-        self.state_simple.state_system.sta_comm_latency = 0
+        self.state_simple.state_system.sta_send_time = 0
         self.state_simple.state_system.sta_packet_loss = 0
         self.state_simple.state_system.sta_leak_detected = 0
         self.state_simple.state_system.sta_uptime = 0
@@ -234,7 +234,7 @@ class LCMInterface:
         ui_state.state_system.sta_system_power = lcm_state.state_system.sta_system_power
         ui_state.state_system.sta_comm_status = lcm_state.state_system.sta_comm_status
         ui_state.state_system.sta_communication_status = lcm_state.state_system.sta_communication_status
-        ui_state.state_system.sta_comm_latency = lcm_state.state_system.sta_comm_latency
+        ui_state.state_system.sta_send_time = lcm_state.state_system.sta_send_time
         ui_state.state_system.sta_packet_loss = lcm_state.state_system.sta_packet_loss
         ui_state.state_system.sta_leak_detected = lcm_state.state_system.sta_leak_detected
         ui_state.state_system.sta_uptime = lcm_state.state_system.sta_uptime

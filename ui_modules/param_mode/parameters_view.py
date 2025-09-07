@@ -29,7 +29,7 @@ class ParametersViewWidget(QWidget):
         # 设置定时器更新数据
         self.update_timer = QTimer()
         self.update_timer.timeout.connect(self.update_display)
-        self.update_timer.start(self.robot_data.uptime)  # 使用统一的uptime参数，20ms更新一次
+        self.update_timer.start(self.robot_data.app_dt)  # 使用统一的app_dt参数，50Hz更新一次
     
     def init_ui(self):
         """初始化用户界面 - 3模块横向布局"""
@@ -286,8 +286,8 @@ class ParametersViewWidget(QWidget):
                     system_state.sta_system_power = float(value)
                 elif param_name == "sta_comm_status":
                     system_state.sta_comm_status = int(value)
-                elif param_name == "sta_comm_latency":
-                    system_state.sta_comm_latency = int(value)
+                elif param_name == "sta_send_time":
+                    system_state.sta_send_time = int(value)
                 elif param_name == "sta_packet_loss":
                     system_state.sta_packet_loss = int(value)
                 elif param_name == "sta_leak_detected":

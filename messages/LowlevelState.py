@@ -69,7 +69,7 @@ class state_system:
 
     sta_comm_status: int = -1  # 通信状态: 0-断开, 1-正常, 2-延迟高, 3-不稳定
     sta_communication_status: int = 1  # 通信状态别名，兼容性
-    sta_comm_latency: int = -1  # 通信延迟 (ms) 传输来的是发送的时间戳,需要由当前时间，计算延迟
+    sta_send_time: int = -1  # 通信延迟 (ms) 传输来的是发送的时间戳,需要由当前时间，计算延迟
     sta_packet_loss: int = 0  # 丢包计数
 
     sta_leak_detected: int = -1  # 漏水检测: 0-正常, 1-检测到漏水
