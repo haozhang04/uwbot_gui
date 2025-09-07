@@ -190,9 +190,7 @@ class LCMInterface:
 
     def _convert_state_to_ui_format(self, lcm_state):
         """将LCM的LowlevelState_t格式转换为UI的LowlevelState dataclass格式"""
-        from messages.LowlevelState import LowlevelState, state_robot, state_floating_mode, state_wheel_mode, state_electromagnet, state_brush, state_system
-        
-        ui_state = LowlevelState()
+        ui_state = LowlevelState_t()
         
         # 转换机器人位姿状态
         ui_state.state_robot.sta_position_x = lcm_state.state_robot.sta_position_x

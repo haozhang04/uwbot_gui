@@ -20,8 +20,9 @@ plt.rcParams['axes.unicode_minus'] = False
 # sudo apt-get install fonts-wqy-microhei fonts-noto-cjk
 
 class PlotWidget(QWidget):
-    def __init__(self):
+    def __init__(self, robot_data=None):
         super().__init__()
+        self.robot_data = robot_data
         self.init_ui()
         self.init_data()
         
@@ -170,7 +171,9 @@ class PlotWidget(QWidget):
         # 设置更新定时器
         self.update_timer = QTimer()
         self.update_timer.timeout.connect(self.update_plot)
-        self.update_timer.start(100)  # 100ms更新一次
+        # 使用统一的uptime参数，如果没有robot_data则使用默认值20ms
+        uptime = self.robot_data.uptime if self.robot_data else 20
+        self.update_timer.start(uptime)  # 使用统一的uptime参数，20ms更新一次
         
 
     
@@ -398,7 +401,7 @@ class PlotDisplayWidget(QWidget):
         layout.setSpacing(12)
         
         # 绘图组件
-        self.plot_widget = PlotWidget()
+        self.plot_widget = PlotWidget(self.robot_data)
         layout.addWidget(self.plot_widget)
     
     def update_display(self):

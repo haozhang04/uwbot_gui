@@ -48,28 +48,31 @@ class state_wheel_mode:
 """电磁铁状态"""
 @dataclass
 class state_electromagnet:
-    sta_electromagnet_enable: int = 0  # 电磁铁状态: 0-关闭, 1-开启
+    sta_electromagnet_enable: int = -1  # 电磁铁状态: 0-关闭, 1-开启
     sta_electromagnet_voltage: int = 0  # 电磁铁电压: 0-100%
 
 """清洗功能控制"""
 @dataclass
 class state_brush:
+    sta_brush_enable: int = -1  # 滚刷开关: 0-关闭, 1-开启
     sta_brush_power: int = 0  # 滚刷功率: 0-100%
-    sta_brush_enable: int = 0  # 滚刷开关: 0-关闭, 1-开启
+
+    sta_water_enable: int = -1  # 水流开关: 0-关闭, 1-开启
     sta_water_flow: int = 0  # 水流强度: 0-100%
-    sta_water_enable: int = 0  # 水流开关: 0-关闭, 1-开启
 
 """系统状态"""
 @dataclass
 class state_system:
-    sta_system_voltage: float = 24.0  # 电压 (V)
-    sta_system_current: float = 0.0  #电流 (A)
-    sta_system_power: float = 0.0  # 功耗 (W)
-    sta_comm_status: int = 1  # 通信状态: 0-断开, 1-正常, 2-延迟高, 3-不稳定
+    sta_system_voltage: float = -1.0  # 电压 (V)
+    sta_system_current: float = -1.0  #电流 (A)
+    sta_system_power: float =-1.0  # 功耗 (W)
+
+    sta_comm_status: int = -1  # 通信状态: 0-断开, 1-正常, 2-延迟高, 3-不稳定
     sta_communication_status: int = 1  # 通信状态别名，兼容性
-    sta_comm_latency: int = 50  # 通信延迟 (ms)
+    sta_comm_latency: int = -1  # 通信延迟 (ms) 传输来的是发送的时间戳,需要由当前时间，计算延迟
     sta_packet_loss: int = 0  # 丢包计数
-    sta_leak_detected: int = 0  # 漏水检测: 0-正常, 1-检测到漏水
+
+    sta_leak_detected: int = -1  # 漏水检测: 0-正常, 1-检测到漏水
     sta_uptime: int = 0  # 系统运行时间 (s)
 
 @dataclass

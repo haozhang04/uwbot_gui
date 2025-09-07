@@ -29,7 +29,7 @@ class ParametersViewWidget(QWidget):
         # 设置定时器更新数据
         self.update_timer = QTimer()
         self.update_timer.timeout.connect(self.update_display)
-        self.update_timer.start(200)  # 200ms更新一次
+        self.update_timer.start(self.robot_data.uptime)  # 使用统一的uptime参数，20ms更新一次
     
     def init_ui(self):
         """初始化用户界面 - 3模块横向布局"""

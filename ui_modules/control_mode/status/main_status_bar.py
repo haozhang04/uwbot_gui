@@ -1,6 +1,7 @@
 from PyQt5.QtWidgets import QWidget, QHBoxLayout, QLabel
 from PyQt5.QtCore import Qt
 import math
+import time
 
 class MainStatusBar(QWidget):
     """主界面底部系统状态栏"""
@@ -187,17 +188,26 @@ class MainStatusBar(QWidget):
             current = float(getattr(system_state, 'sta_system_current', 0.0))
             power = float(getattr(system_state, 'sta_system_power', 0.0))
             comm_status_code = int(getattr(system_state, 'sta_comm_status', 0))
-            latency = int(getattr(system_state, 'sta_comm_latency', 0))
+            # sta_comm_latency是发送时间戳，需要计算实际延迟
+            send_time = int(getattr(system_state, 'sta_comm_latency', 0))
+            if send_time > 0:
+                current_time = int(time.time() * 1000)  # 当前时间戳(ms)
+                latency = current_time - send_time  # 计算延迟
+                # 防止负值或异常大值
+                if latency < 0 or latency > 10000:  # 超过10秒认为异常
+                    latency = -1
+            else:
+                latency = -1  # 无效数据
             packet_loss = int(getattr(system_state, 'sta_packet_loss', 0))
             leak = int(getattr(system_state, 'sta_leak_detected', 0))
             uptime = int(getattr(system_state, 'sta_uptime', 0))
             
-            # 电气显示及阈值着色（假设24V系统）
+            # 电气显示及阈值着色（假设48V系统）
             self.voltage_label.setText(f"🔋 电压: {voltage:.1f}V")
-            # 阈值：>=22 正常，20-22 警告，<20 错误
-            if voltage < 20.0:
+            # 阈值：>=44 正常，42-44 警告，<42 错误
+            if voltage < 42.0:
                 self._set_status_style(self.voltage_label, "error")
-            elif voltage < 22.0:
+            elif voltage < 44.0:
                 self._set_status_style(self.voltage_label, "warning")
             else:
                 self._set_status_style(self.voltage_label, "normal")
@@ -220,24 +230,35 @@ class MainStatusBar(QWidget):
                 self._set_status_style(self.comm_label, "normal")
             
             # 延迟与丢包阈值着色
-            self.latency_label.setText(f"🕑 延迟: {latency}ms")
-            if latency > 300:
+            if latency == -1:
+                self.latency_label.setText("🕑 延迟: 无效")
                 self._set_status_style(self.latency_label, "error")
-            elif latency > 100:
-                self._set_status_style(self.latency_label, "warning")
             else:
-                self._set_status_style(self.latency_label, "normal")
+                self.latency_label.setText(f"🕑 延迟: {latency}ms")
+                if latency > 300:
+                    self._set_status_style(self.latency_label, "error")
+                elif latency > 100:
+                    self._set_status_style(self.latency_label, "warning")
+                else:
+                    self._set_status_style(self.latency_label, "normal")
             
-            self.packet_loss_label.setText(f"📉 丢包: {packet_loss}%")
-            if packet_loss > 5:
+            if packet_loss == -1:
+                self.packet_loss_label.setText("📉 丢包: 无效")
                 self._set_status_style(self.packet_loss_label, "error")
-            elif packet_loss > 1:
-                self._set_status_style(self.packet_loss_label, "warning")
             else:
-                self._set_status_style(self.packet_loss_label, "normal")
+                self.packet_loss_label.setText(f"📉 丢包: {packet_loss}%")
+                if packet_loss > 5:
+                    self._set_status_style(self.packet_loss_label, "error")
+                elif packet_loss > 1:
+                    self._set_status_style(self.packet_loss_label, "warning")
+                else:
+                    self._set_status_style(self.packet_loss_label, "normal")
             
             # 漏水检测
-            if leak:
+            if leak == -1:
+                self.leak_label.setText("💧 漏水: 无效")
+                self._set_status_style(self.leak_label, "error")
+            elif leak:
                 self.leak_label.setText("💧 漏水: 检测到漏水")
                 self._set_status_style(self.leak_label, "error")
             else:
@@ -245,8 +266,12 @@ class MainStatusBar(QWidget):
                 self._set_status_style(self.leak_label, "normal")
             
             # 运行时间（人性化显示）
-            self.uptime_label.setText(f"⏱️ 运行: {self._format_uptime(uptime)}")
-            self._set_status_style(self.uptime_label, "normal")
+            if uptime == -1:
+                self.uptime_label.setText("⏱️ 运行: 无效")
+                self._set_status_style(self.uptime_label, "error")
+            else:
+                self.uptime_label.setText(f"⏱️ 运行: {self._format_uptime(uptime)}")
+                self._set_status_style(self.uptime_label, "normal")
             
         except Exception as e:
             print(f"状态栏更新错误: {e}")
