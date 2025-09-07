@@ -31,10 +31,10 @@ class CameraConfig:
     DEFAULT_FPS = 30
     
     # RTSP流配置
-    RTSP_CAMERA_0_URL = "rtsp://localhost:8554/mystream0"
-    RTSP_CAMERA_1_URL = "rtsp://localhost:8554/mystream1"
-    RTSP_BASE_URL = "rtsp://localhost:8554/mystream"
-    
+    RTSP_CAMERA_0_URL = "rtsp://192.168.2.66:8554/mystream0"
+    RTSP_CAMERA_1_URL = "rtsp://192.168.2.66:8554/mystream1"
+    RTSP_BASE_URL = "rtsp://192.168.2.66:8554/mystream"
+
     # 相机打开方式
     USE_RTSP = True
     
