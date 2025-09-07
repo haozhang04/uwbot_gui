@@ -20,6 +20,7 @@ class RobotDataManager:
         if not self._initialized:
             self.cmd = LowlevelCmd()
             self.state = LowlevelState()
+            self.uptime = 20  # 统一的定时器间隔，20ms更新一次，50Hz
             self._initialized = True
     
     def get_cmd_data(self):
