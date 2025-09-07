@@ -2,6 +2,7 @@ from PyQt5.QtWidgets import QWidget, QHBoxLayout, QLabel
 from PyQt5.QtCore import Qt
 import math
 import time
+from config.uwbot_config import MAIN_STATUS_BAR_CONFIG, MAIN_CONFIG
 
 class MainStatusBar(QWidget):
     """主界面底部系统状态栏"""
@@ -93,8 +94,8 @@ class MainStatusBar(QWidget):
         self.current_label.setToolTip("系统电流（A）")
         self.power_label.setToolTip("系统功耗（W）")
         self.comm_label.setToolTip("通信状态：0=断开，1=正常，2=延迟高，3=不稳定")
-        self.latency_label.setToolTip("通信延迟（ms）：>100ms 警告，>300ms 错误")
-        self.packet_loss_label.setToolTip("丢包率（%）：>1% 警告，>5% 错误")
+        self.latency_label.setToolTip(f"通信延迟（ms）：>{MAIN_STATUS_BAR_CONFIG.LATENCY_WARNING_THRESHOLD}ms 警告，>{MAIN_STATUS_BAR_CONFIG.LATENCY_ERROR_THRESHOLD}ms 错误")
+        self.packet_loss_label.setToolTip(f"丢包率（%）：>{MAIN_STATUS_BAR_CONFIG.PACKET_LOSS_WARNING_THRESHOLD}% 警告，>{MAIN_STATUS_BAR_CONFIG.PACKET_LOSS_ERROR_THRESHOLD}% 错误")
         self.leak_label.setToolTip("漏水检测：检测到漏水将高亮提示")
         self.uptime_label.setToolTip("系统持续运行时长")
         
@@ -139,7 +140,7 @@ class MainStatusBar(QWidget):
         layout.addWidget(keyboard_help_label)
         
         # 版本信息置于最右侧
-        version_label = QLabel("v1.0.0")
+        version_label = QLabel(f"v{MAIN_CONFIG.APP_VERSION}")
         version_label.setStyleSheet("""
             QLabel {
                 color: #6c757d;
@@ -205,10 +206,10 @@ class MainStatusBar(QWidget):
             
             # 电气显示及阈值着色（假设48V系统）
             self.voltage_label.setText(f"🔋 电压: {voltage:.1f}V")
-            # 阈值：>=44 正常，42-44 警告，<42 错误
-            if voltage < 42.0:
+            # 使用配置的电压阈值
+            if voltage < MAIN_STATUS_BAR_CONFIG.VOLTAGE_ERROR_THRESHOLD:
                 self._set_status_style(self.voltage_label, "error")
-            elif voltage < 44.0:
+            elif voltage < MAIN_STATUS_BAR_CONFIG.VOLTAGE_WARNING_THRESHOLD:
                 self._set_status_style(self.voltage_label, "warning")
             else:
                 self._set_status_style(self.voltage_label, "normal")
@@ -236,9 +237,9 @@ class MainStatusBar(QWidget):
                 self._set_status_style(self.latency_label, "error")
             else:
                 self.latency_label.setText(f"🕑 延迟: {latency}ms")
-                if latency > 300:
+                if latency > MAIN_STATUS_BAR_CONFIG.LATENCY_ERROR_THRESHOLD:
                     self._set_status_style(self.latency_label, "error")
-                elif latency > 100:
+                elif latency > MAIN_STATUS_BAR_CONFIG.LATENCY_WARNING_THRESHOLD:
                     self._set_status_style(self.latency_label, "warning")
                 else:
                     self._set_status_style(self.latency_label, "normal")
@@ -248,9 +249,9 @@ class MainStatusBar(QWidget):
                 self._set_status_style(self.packet_loss_label, "error")
             else:
                 self.packet_loss_label.setText(f"📉 丢包: {packet_loss}%")
-                if packet_loss > 5:
+                if packet_loss > MAIN_STATUS_BAR_CONFIG.PACKET_LOSS_ERROR_THRESHOLD:
                     self._set_status_style(self.packet_loss_label, "error")
-                elif packet_loss > 1:
+                elif packet_loss > MAIN_STATUS_BAR_CONFIG.PACKET_LOSS_WARNING_THRESHOLD:
                     self._set_status_style(self.packet_loss_label, "warning")
                 else:
                     self._set_status_style(self.packet_loss_label, "normal")

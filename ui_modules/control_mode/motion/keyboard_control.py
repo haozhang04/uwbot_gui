@@ -3,6 +3,7 @@ import logging
 from PyQt5.QtCore import QObject, QTimer, pyqtSignal, Qt
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QCheckBox, QLabel, QFrame, QTextEdit
 from PyQt5.QtGui import QKeyEvent
+from config.uwbot_config import KEYBOARD_CONTROL_CONFIG
 """
 浮游模式控制:
   移动控制: W(前进) S(后退) A(左移) D(右移) Q(上升) E(下降)
@@ -84,7 +85,7 @@ class KeyboardController(QObject):
         """设置键盘控制是否启用"""
         self.enabled = enabled
         if enabled:
-            self.key_timer.start(50)  # 50ms间隔处理按键
+            self.key_timer.start(KEYBOARD_CONTROL_CONFIG.KEY_TIMER_INTERVAL)  # 使用配置的定时器间隔
             logging.info("键盘控制已启用")
         else:
             self.key_timer.stop()

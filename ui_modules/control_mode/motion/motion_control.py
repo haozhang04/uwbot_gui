@@ -15,6 +15,7 @@ from PyQt5.QtGui import QFont, QPalette
 import math
 import logging
 from .keyboard_control import KeyboardController, KeyboardControlWidget
+from config.uwbot_config import MOTION_CONTROL_CONFIG
 
 class MotionControlWidget(QWidget):
     """机器人运动控制组件"""
@@ -279,10 +280,10 @@ class MotionControlWidget(QWidget):
         # 深度控制（带输入验证）
         self.depth_hold_checkbox = QCheckBox("定深功能")
         self.target_depth_spinbox = QDoubleSpinBox()
-        self.target_depth_spinbox.setRange(0.0, 100.0)
+        self.target_depth_spinbox.setRange(MOTION_CONTROL_CONFIG.MIN_DEPTH, MOTION_CONTROL_CONFIG.MAX_DEPTH)
         self.target_depth_spinbox.setSingleStep(0.1)
         self.target_depth_spinbox.setDecimals(2)
-        self.target_depth_spinbox.setToolTip("目标深度范围: 0.0 ~ 100.0 m")
+        self.target_depth_spinbox.setToolTip(f"目标深度范围: {MOTION_CONTROL_CONFIG.MIN_DEPTH} ~ {MOTION_CONTROL_CONFIG.MAX_DEPTH} m")
         self.target_depth_spinbox.setStyleSheet("QDoubleSpinBox { border: 2px solid #17a2b8; }")
         
         # 定航控制
@@ -385,10 +386,10 @@ class MotionControlWidget(QWidget):
         self.depth_hold_checkbox.setStyleSheet("QCheckBox { font-weight: bold; }")
         
         self.target_depth_spinbox = QDoubleSpinBox()
-        self.target_depth_spinbox.setRange(0.0, 50.0)
+        self.target_depth_spinbox.setRange(MOTION_CONTROL_CONFIG.MIN_DEPTH, MOTION_CONTROL_CONFIG.MAX_DEPTH)
         self.target_depth_spinbox.setSingleStep(0.1)
         self.target_depth_spinbox.setDecimals(2)
-        self.target_depth_spinbox.setToolTip("目标深度范围: 0.0 ~ 50.0 m")
+        self.target_depth_spinbox.setToolTip(f"目标深度范围: {MOTION_CONTROL_CONFIG.MIN_DEPTH} ~ {MOTION_CONTROL_CONFIG.MAX_DEPTH} m")
         self.target_depth_spinbox.setStyleSheet("QDoubleSpinBox { border: 2px solid #17a2b8; }")
         
         # 定航控制

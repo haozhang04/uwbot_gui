@@ -21,13 +21,14 @@ from .video_recorder import VideoRecorder
 class CameraWidget(QWidget):
     """单个相机组件"""
     
-    def __init__(self, title, camera_id, robot_data, screen_width=1920, screen_height=1080):
+    def __init__(self, title, camera_id, robot_data, screen_width=1920, screen_height=1080, use_rtsp=True):
         super().__init__()
         self.title = title
         self.camera_id = camera_id
         self.robot_data = robot_data
         self.screen_width = screen_width
         self.screen_height = screen_height
+        self.use_rtsp = use_rtsp  # 相机打开方式：True-RTSP流，False-OpenCV直接打开
         self.camera_thread = None
         self.recorder = VideoRecorder()
         self.current_frame = None
@@ -176,7 +177,7 @@ class CameraWidget(QWidget):
     def start_camera(self):
         """启动相机"""
         if self.camera_thread is None:
-            self.camera_thread = CameraThread(self.camera_id)
+            self.camera_thread = CameraThread(self.camera_id, self.use_rtsp)
             self.camera_thread.frame_ready.connect(self.update_frame)
             self.camera_thread.start_camera()
             

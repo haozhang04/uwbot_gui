@@ -5,6 +5,7 @@
 """
 from LowlevelState import LowlevelState
 from LowlevelCmd import LowlevelCmd
+from config.uwbot_config import ROBOT_DATA_CONFIG
 
 class RobotDataManager:
     """机器人数据管理器"""
@@ -20,7 +21,7 @@ class RobotDataManager:
         if not self._initialized:
             self.cmd = LowlevelCmd()
             self.state = LowlevelState()
-            self.app_dt = 20  # 统一的定时器间隔，50Hz，20ms
+            self.app_dt = ROBOT_DATA_CONFIG.APP_DT  # 使用配置的定时器间隔
             self._initialized = True
     
     def get_cmd_data(self):

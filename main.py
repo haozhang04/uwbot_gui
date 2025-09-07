@@ -20,6 +20,9 @@ from PyQt5.QtGui import QFont
 sys.path.append(os.path.join(os.path.dirname(__file__), 'messages'))
 from robot_data import get_robot_data
 
+# 导入配置
+from config.uwbot_config import MAIN_CONFIG
+
 # 导入各个模块
 from ui_modules.control_mode.status.status_display import StatusDisplayWidget
 from ui_modules.control_mode.status.main_status_bar import MainStatusBar
@@ -85,7 +88,7 @@ class MainWindow(QMainWindow):
         
     def init_ui(self):
         """初始化用户界面"""
-        self.setWindowTitle("水下机器人控制系统")
+        self.setWindowTitle(MAIN_CONFIG.WINDOW_TITLE)
         
         # 获取屏幕尺寸
         desktop = QDesktopWidget()
@@ -103,10 +106,12 @@ class MainWindow(QMainWindow):
             # 最大化模式
             self.setWindowState(Qt.WindowMaximized)
         else:
-            # 普通窗口模式
-            self.resize(1200, 800)
+            # 普通窗口模式 - 使用配置的默认窗口尺寸
+            default_width = int(screen_width * 0.8)  # 屏幕宽度的80%
+            default_height = int(screen_height * 0.8)  # 屏幕高度的80%
+            self.resize(default_width, default_height)
             # 居中显示
-            self.move((screen_width - 1200) // 2, (screen_height - 800) // 2)
+            self.move((screen_width - default_width) // 2, (screen_height - default_height) // 2)
         
         # 设置置顶属性
         if window_config.get("always_on_top", False):
@@ -166,7 +171,7 @@ class MainWindow(QMainWindow):
         main_layout.setSpacing(5)
         
         # 创建标题
-        title_label = QLabel("水下机器人控制系统")
+        title_label = QLabel(MAIN_CONFIG.APP_NAME)
         title_label.setAlignment(Qt.AlignCenter)
         title_label.setFont(QFont("Microsoft YaHei UI", 20, QFont.Bold))
         title_label.setStyleSheet("""
@@ -251,14 +256,14 @@ class MainWindow(QMainWindow):
         """设置定时器用于数据更新"""
         self.update_timer = QTimer()
         self.update_timer.timeout.connect(self.update_data)
-        self.update_timer.start(self.robot_data.app_dt)  # 使用统一的app_dt参数，50Hz更新一次
+        self.update_timer.start(MAIN_CONFIG.UPDATE_TIMER_INTERVAL)  # 使用配置的定时器间隔
         
     def on_tab_changed(self, index):
         """标签页切换时的处理"""
         # 暂停非活动标签页的定时器以提升性能
         if hasattr(self, 'parameters_widget'):
             if index == 1:  # 参数界面
-                self.parameters_widget.update_timer.start(self.robot_data.app_dt)  # 使用统一的app_dt参数
+                self.parameters_widget.update_timer.start(MAIN_CONFIG.UPDATE_TIMER_INTERVAL)  # 使用配置的定时器间隔
             else:
                 self.parameters_widget.update_timer.stop()
     
@@ -271,7 +276,7 @@ class MainWindow(QMainWindow):
         self.lcm.send_data_once()
 
         # 更新系统运行时间
-        self.uptime_counter += self.robot_data.app_dt / 1000.0  # 根据app_dt参数增加时间
+        self.uptime_counter += MAIN_CONFIG.UPDATE_TIMER_INTERVAL / 1000.0  # 根据配置的定时器间隔增加时间
         self.robot_data.update_uptime(self.uptime_counter)
 
         # 始终更新主状态栏
@@ -312,8 +317,8 @@ def main():
     app = QApplication(sys.argv)
     
     # 设置应用程序属性
-    app.setApplicationName("水下机器人控制系统")
-    app.setApplicationVersion("1.0.0")
+    app.setApplicationName(MAIN_CONFIG.APP_NAME)
+    app.setApplicationVersion(MAIN_CONFIG.APP_VERSION)
     
     # 设置字体
     font = QFont("SimHei", 9)

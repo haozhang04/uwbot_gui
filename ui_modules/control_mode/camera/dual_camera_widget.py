@@ -12,11 +12,12 @@ from .camera_widget import CameraWidget
 class DualCameraWidget(QWidget):
     """双相机控制组件 - 水平排列"""
     
-    def __init__(self, robot_data, screen_width=1920, screen_height=1080):
+    def __init__(self, robot_data, screen_width=1920, screen_height=1080, use_rtsp=True):
         super().__init__()
         self.robot_data = robot_data
         self.screen_width = screen_width
         self.screen_height = screen_height
+        self.use_rtsp = use_rtsp  # 相机打开方式：True-RTSP流，False-OpenCV直接打开
         self.init_ui()
         
     def init_ui(self):
@@ -40,9 +41,9 @@ class DualCameraWidget(QWidget):
             }
         """)
         
-        # 创建两个相机组件
-        self.camera1_widget = CameraWidget("📹 前置相机", 0, self.robot_data)
-        self.camera2_widget = CameraWidget("📹 后置相机", 1, self.robot_data)
+        # 创建两个相机组件，传递相机打开方式参数
+        self.camera1_widget = CameraWidget("📹 前置相机", 0, self.robot_data, use_rtsp=self.use_rtsp)
+        self.camera2_widget = CameraWidget("📹 后置相机", 1, self.robot_data, use_rtsp=self.use_rtsp)
         
         # 添加到分割器
         splitter.addWidget(self.camera1_widget)
