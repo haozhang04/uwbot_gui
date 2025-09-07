@@ -1,0 +1,70 @@
+/**
+ * 水下机器人低级控制命令数据结构
+ * 包含浮游模式、轮式模式、电磁铁、清洗、相机等功能的控制命令
+ */
+
+/** 浮游模式控制命令 */
+struct cmd_floating_mode_t {
+    // 浮游模式控制
+    float cmd_floating_vel_x;        // X方向线速度 (m/s)
+    float cmd_floating_vel_y;        // Y方向线速度 (m/s)
+    float cmd_floating_vel_z;        // Z方向线速度 (m/s)
+    float cmd_floating_angular_roll; // 横滚角度 (rad)
+    float cmd_floating_angular_yaw;  // 航向角度 (rad)
+    float cmd_floating_angular_pitch;// 俯仰角度 (rad)
+    
+    // 深度控制
+    int32_t cmd_depth_hold;          // 定深功能: 0-关闭, 1-开启
+    float cmd_target_depth;          // 目标深度 (m)
+    
+    // 定航控制
+    int32_t cmd_floating_heading_hold; // 定向功能: 0-关闭, 1-开启
+    float cmd_target_roll;           // 目标横滚角 (rad)
+    float cmd_target_yaw;            // 目标航向角 (rad)
+    float cmd_target_pitch;          // 目标俯仰角 (rad)
+}
+
+/** 轮式模式控制命令 */
+struct cmd_wheel_mode_t {
+    // 轮式模式控制
+    float cmd_wheel_linear_vel;      // 线速度 (m/s)
+    float cmd_wheel_angular_vel;     // 角速度 (rad/s)
+    
+    // 轮式定航控制
+    int32_t cmd_wheel_heading_hold;  // 定向功能: 0-关闭, 1-开启
+    float cmd_target_heading;        // 目标方向 (rad)
+}
+
+/** 电磁铁功能控制 */
+struct cmd_electromagnet_t {
+    int32_t cmd_electromagnet_enable; // 电磁铁状态: 0-关闭, 1-开启
+    int32_t cmd_electromagnet_voltage; // 电磁铁电压: 0-100%
+}
+
+/** 清洗功能控制 */
+struct cmd_brush_t {
+    int32_t cmd_brush_power;         // 滚刷功率: 0-100%
+    int32_t cmd_brush_enable;        // 滚刷开关: 0-关闭, 1-开启
+    int32_t cmd_water_flow;          // 水流强度: 0-100%
+    int32_t cmd_water_enable;        // 水流开关: 0-关闭, 1-开启
+}
+
+/** 相机功能控制 */
+struct cmd_camera_t {
+    int32_t cmd_camera_enable[2];    // 相机开关: [前置, 后置] 0-关闭, 1-开启
+    int32_t cmd_camera_zoom[2];      // 相机缩放: [前置, 后置] 0-100%
+    int32_t cmd_camera_record[2];    // 录制功能: [前置, 后置] 0-停止, 1-开始
+    int32_t cmd_camera_record_time[2]; // 录制时间: [前置, 后置]
+    int32_t cmd_camera_snapshot[2];  // 截图功能: [前置, 后置] 0-无操作, 1-截图
+    string cmd_storage_path[2];      // 储存路径
+    string cmd_camera_path[2];       // 储存名称
+}
+
+/** 机器人控制结构体 */
+struct LowlevelCmd_t {
+    cmd_floating_mode_t cmd_floating_mode;
+    cmd_wheel_mode_t cmd_wheel_mode;
+    cmd_electromagnet_t cmd_electromagnet;
+    cmd_brush_t cmd_brush;
+    cmd_camera_t cmd_camera;
+}

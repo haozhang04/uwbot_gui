@@ -1,0 +1,78 @@
+/**
+ * 水下机器人低级状态数据结构
+ * 包含浮游模式、轮式模式、电磁铁、清洗等功能的状态数据
+ */
+
+/** 机器人状态 */
+struct state_robot_t {
+    // 位置和姿态
+    float sta_position_x;      // X坐标 (m)
+    float sta_position_y;      // Y坐标 (m)
+    float sta_position_z;      // Z坐标/深度 (m)
+    float sta_roll;            // 横滚角 (rad)
+    float sta_pitch;           // 俯仰角 (rad)
+    float sta_yaw;             // 偏航角 (rad)
+}
+
+/** 浮游模式状态 */
+struct state_floating_mode_t {
+    // 速度状态
+    float sta_floating_vel_x;      // X方向线速度 (m/s)
+    float sta_floating_vel_y;      // Y方向线速度 (m/s)
+    float sta_floating_vel_z;      // Z方向线速度 (m/s)
+    float sta_floating_angular_x;  // X轴角速度 (rad/s)
+    float sta_floating_angular_y;  // Y轴角速度 (rad/s)
+    float sta_floating_angular_z;  // Z轴角速度 (rad/s)
+
+    // 推进器状态
+    float sta_thruster_power[4];   // 4个推进器功率百分比
+    float sta_thruster_temp[4];    // 4个推进器温度
+}
+
+/** 轮式模式状态 */
+struct state_wheel_mode_t {
+    // 速度状态
+    float sta_wheel_linear_vel;    // 线速度 (m/s)
+    float sta_wheel_angular_vel;   // 角速度 (rad/s)
+    
+    // 电机状态
+    float sta_motor_data[3];       // 3个电机数据 0-舵机角度 (°), 1-1号电机速度 (m/s), 2-1号电机速度(m/s)
+    float sta_motor_temp[3];       // 3个电机温度
+}
+
+/** 电磁铁状态 */
+struct state_electromagnet_t {
+    int32_t sta_electromagnet_enable;  // 电磁铁状态: 0-关闭, 1-开启
+    int32_t sta_electromagnet_voltage; // 电磁铁电压: 0-100%
+}
+
+/** 清洗功能状态 */
+struct state_brush_t {
+    int32_t sta_brush_power;    // 滚刷功率: 0-100%
+    int32_t sta_brush_enable;   // 滚刷开关: 0-关闭, 1-开启
+    int32_t sta_water_flow;     // 水流强度: 0-100%
+    int32_t sta_water_enable;   // 水流开关: 0-关闭, 1-开启
+}
+
+/** 系统状态 */
+struct state_system_t {
+    float sta_system_voltage;       // 电压 (V)
+    float sta_system_current;       // 电流 (A)
+    float sta_system_power;         // 功耗 (W)
+    int32_t sta_comm_status;        // 通信状态: 0-断开, 1-正常, 2-延迟高, 3-不稳定
+    int32_t sta_communication_status; // 通信状态别名，兼容性
+    int64_t sta_send_time;       // 发送时间 (ms)
+    int32_t sta_packet_loss;        // 丢包计数
+    int32_t sta_leak_detected;      // 漏水检测: 0-正常, 1-检测到漏水
+    int32_t sta_uptime;             // 系统运行时间 (s)
+}
+
+/** 机器人状态结构体 */
+struct LowlevelState_t {
+    state_robot_t state_robot;
+    state_floating_mode_t state_floating_mode;
+    state_wheel_mode_t state_wheel_mode;
+    state_electromagnet_t state_electromagnet;
+    state_brush_t state_brush;
+    state_system_t state_system;
+}
